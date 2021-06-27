@@ -1,10 +1,15 @@
-import { GetServerSideProps  } from 'next';
+import { GetStaticProps  } from 'next';
 import Head from 'next/head';
 
 import { SubscribeButton } from '../components/SubscribeButton';
 import { stripe } from '../services/stripe';
 
 import styles from './home.module.scss';
+
+// 3 ways of rendering a page
+// Client-side
+// Server-side
+// Static Site Generation
 
 interface HomeProps {
   product: {
@@ -38,7 +43,7 @@ export default function Home({ product }:  HomeProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const price = await stripe.prices.retrieve('price_1J71uSHc1fUceudiGBknPmD2')
 
   const product = {
@@ -52,6 +57,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {
       product
-    }
+    },
+    revalidate: 60 * 60 * 24, // (60s, 60min, 24h) => 24 hours
   }
 }
